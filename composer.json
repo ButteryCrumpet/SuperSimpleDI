@@ -1,5 +1,16 @@
 {
     "name": "butterycrumpet/supersimpledi",
+    "type": "library",
+    "description": "A super simple dependency injection container",
+    "keywords": ["di","dependency injection","container"],
+    "license": "MIT",
+    "homepage": "",
+    "authors": [{
+        "name": "PPBuilds",
+        "email": "sleigh@produce-pro.co.jp",
+        "homepage": ""
+    }],
+
     "autoload": {
         "psr-4": {
             "SuperSimpleDI\\": "src"
