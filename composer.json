@@ -1,0 +1,14 @@
+{
+    "name": "butterycrumpet/supersimpledi",
+    "autoload": {
+        "psr-4": {
+            "SuperSimpleDI\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.9.2"
+    },
+    "require": {
+        "psr/container": "^1.0"
+    }
+}
