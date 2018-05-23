@@ -4,6 +4,6 @@ namespace SuperSimpleDI\Exceptions;
 
 use Psr\Container\ContainerExceptionInterface;
 
-class ImmutableIdException extends \InvalidArgumentException implements ContainerExceptionInterface
+class ImmutableServiceException extends \InvalidArgumentException implements ContainerExceptionInterface
 {
 }

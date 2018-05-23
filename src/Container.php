@@ -3,8 +3,9 @@
 namespace SuperSimpleDI;
 
 use Psr\Container\ContainerInterface;
-use Exceptions\NotInvokableException;
-use Exceptions\ImmutableIdException;
+use SuperSimpleDI\Exceptions\NotInvokableException;
+use SuperSimpleDI\Exceptions\ImmutableServiceException;
+use SuperSimpleDI\Exceptions\ServiceNotFoundException;
 
 class Container implements ContainerInterface
 {
@@ -14,11 +15,15 @@ class Container implements ContainerInterface
 
     public function get($id)
     {
-        if (isset($factories[$id])) {
+        if (!isset($this->services[$id])) {
+            throw new ServiceNotFoundException("The service: ${id} does not exist");
+        }
+
+        if (isset($this->factories[$id])) {
             return $this->services[$id]($this);
         }
 
-        if (\method_exists($callable, '__invoke')) {
+        if (\method_exists($this->services[$id], '__invoke')) {
             $this->services[$id] = $this->services[$id]($this);
         }
         return $this->services[$id];
@@ -29,14 +34,16 @@ class Container implements ContainerInterface
         return isset($this->services[$id]);
     }
 
-    public function register($id, $value, $mutable = true)
+    public function register($id, $value, $immutable = false)
     {
-        if (isset($this->immutable[$id])) {
-            throw new ImmutableServiceException("The service: ${id} is immutable");
+        if (isset($this->mutable[$id])) {
+            if (!$this->mutable[$id]) {
+                throw new ImmutableServiceException("The service: ${id} is immutable");
+            }
         }
 
         $this->services[$id] = $value;
-        $this->mutable[$id] = $mutable;
+        $this->mutable[$id] = !$immutable;
     }
 
     public function registerFactory($id, $callable)
@@ -45,11 +52,13 @@ class Container implements ContainerInterface
             throw new NotInvokableException("Value must be a closure or invokable object");
         }
 
-        if (!$this->mutable[$id]) {
-            throw new ImmutableServiceException("The service: ${id} is immutable");
+        if (isset($this->mutable[$id])) {
+            if (!$this->mutable[$id]) {
+                throw new ImmutableServiceException("The service: ${id} is immutable");
+            }
         }
 
         $this->factories[$id] = true;
-        $this->services[$id] = $value;
+        $this->services[$id] = $callable;
     }
 }
